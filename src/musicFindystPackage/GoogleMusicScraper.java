@@ -32,7 +32,7 @@ public class GoogleMusicScraper extends DirectWebScraper<MusicResource> implemen
 		return findAlbums(authorName, false);
 	}
 	
-	public ArrayList<Album> findAlbums(String authorName, boolean trust)
+	public ArrayList<Album> findAlbums(String authorName, boolean checkOtherAuthors)
 	{
 		ArrayList<Album> albums = new ArrayList<>();
 		
@@ -72,9 +72,9 @@ public class GoogleMusicScraper extends DirectWebScraper<MusicResource> implemen
 			
 			//Instantiation of Album object
 			albums.add(
-				trust
-					? new Album(new Author(authorName), albumName)
-					: new Album(findAuthors(albumName), albumName)
+				checkOtherAuthors
+					? new Album(findAuthors(albumName), albumName)
+					: new Album(new Author(correctAuthorName), albumName)
 			);
 			
 			//Printing album's data
