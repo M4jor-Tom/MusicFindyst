@@ -1,12 +1,40 @@
 package testPackage;
 
+import java.util.HashMap;
+
 import musicFindystPackage.GoogleMusicScraper;
 import musicFindystPackage.MusicFindystInterface;
+import musicFindystPackage.MusicFindystVersionable;
+import resourcePackage.ResourcystVersionable;
+import versionystPackage.Versionable;
+import versionystPackage.Versionyst;
 
 public class testClass
 {
+	public static void versionsCheck()
+	{
+		//Variables initialization
+		HashMap<String, Integer> existingDependencies = new HashMap<>();
+		Versionable[] versionables =
+		{
+			new MusicFindystVersionable(),
+			new ResourcystVersionable(),
+			new Versionyst()
+		};
+		
+		//Versions setting
+		existingDependencies.put("ResourcystVersionable", versionables[1].getVersionId());
+		existingDependencies.put("Versionyst", versionables[2].getVersionId());
+
+		//Versions checking
+		for(Versionable versionable: versionables)
+			versionable.checkSubPackagesVersions(existingDependencies);
+	}
+	
 	public static void main(String[] args)
 	{
+		versionsCheck();
+		
 		String
 			typoAlbumName = "smoke + mirors",
 			typoAuthorName = "dafte pounk";
