@@ -2,6 +2,7 @@ package musicFindystPackage;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -10,9 +11,11 @@ import resourcePackage.Resource;
 
 public abstract class DirectWebScraper<ResourceType extends Resource>
 {
-	private ArrayList<ResourceType> _resources;
+	private List<ResourceType> _resources;
 	private String _fetchUrl;
 	protected final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.82 Safari/537.36";
+	
+	private Document _cachedDocument;
 	
 	public DirectWebScraper(String fetchUrl)
 	{
@@ -21,6 +24,7 @@ public abstract class DirectWebScraper<ResourceType extends Resource>
 		
 		//Setting data
 		setFetchUrl(fetchUrl);
+		setCachedDocument(null);
 	}
 
 	public static Document getDocument(String stringUrl)
@@ -39,13 +43,13 @@ public abstract class DirectWebScraper<ResourceType extends Resource>
 		return null;
 	}
 
-	public ArrayList<ResourceType> getResources()
+	public List<ResourceType> getResources()
 	{
 		//Returning actual resources
 		return _resources;
 	}
 	
-	public void setResources(ArrayList<ResourceType> resources)
+	public void setResources(List<ResourceType> resources)
 	{
 		_resources = resources;
 	}
@@ -58,5 +62,26 @@ public abstract class DirectWebScraper<ResourceType extends Resource>
 	public void setFetchUrl(String fetchUrl)
 	{
 		_fetchUrl = fetchUrl;
+	}
+
+	protected Document getCachedDocument()
+	{
+		return _cachedDocument;
+	}
+
+	protected void setCachedDocument(Document cachedDocument)
+	{
+		_cachedDocument = cachedDocument;
+	}
+	
+	protected void cacheDocument(String stringUrl)
+	{
+		if(getCachedDocument() == null)
+			setCachedDocument(getDocument(stringUrl));
+	}
+	
+	protected void emptyCachedDocument()
+	{
+		setCachedDocument(null);
 	}
 }

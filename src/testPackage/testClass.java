@@ -36,11 +36,21 @@ public class testClass
 		versionsCheck();
 		
 		String
+			typoSongName = "smok and mirors",
 			typoAlbumName = "smoke + mirors",
 			typoAuthorName = "dafte pounk";
 		
 		MusicFindystInterface musicFindystInterface = new GoogleMusicScraper();
+		
+		//Unit tests
+		System.out.println(
+			typoSongName + " correct name: " + musicFindystInterface.correctMusicResourceName(typoSongName, "Imagine dragons") + "\n" +
+			typoAlbumName + " correct name: " + musicFindystInterface.correctAlbumName(typoAlbumName) + "\n" +
+			typoAuthorName + " correct name: " + musicFindystInterface.correctAuthorName(typoAuthorName)
+		);
+		
 		musicFindystInterface.findMusicResourcesByAlbumName(typoAlbumName);
+		
 		System.out.println(
 			"Correct album name: " + musicFindystInterface.getMusicResources().get(0).getAlbums().get(0)
 			+ "\nRather than: " + typoAlbumName

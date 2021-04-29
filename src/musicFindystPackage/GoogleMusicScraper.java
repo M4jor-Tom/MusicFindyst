@@ -5,7 +5,9 @@ import resourcePackage.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
+import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -14,6 +16,8 @@ public class GoogleMusicScraper extends DirectWebScraper<MusicResource> implemen
 {	
 	private static final String GOOGLE_STRING_URL = "https://www.google.com";
 	private static final String UNSET_ALBUM_NAME = "UNSET_ALBUM_NAME";
+	
+	private Elements _cachedSongElements;
 	
 	public GoogleMusicScraper()
 	{
@@ -25,42 +29,128 @@ public class GoogleMusicScraper extends DirectWebScraper<MusicResource> implemen
 	{
 		return getFetchUrl() + "/search?q=" + searchBarQuery;
 	}
-	
+
+
 	@Override
-	public ArrayList<Album> findAlbums(String authorName)
+	public String correctAuthorName(String authorName)
 	{
-		return findAlbums(authorName, false);
+		return correctAuthorName(authorName, false, false);
 	}
 	
-	public ArrayList<Album> findAlbums(String authorName, boolean checkOtherAuthors)
+	public String correctAuthorName(String authorName, boolean cacheDocument, boolean albumsPage)
 	{
-		ArrayList<Album> albums = new ArrayList<>();
+		//Page selection
+		String label = albumsPage
+			? " ablums"
+			: " songs";
 		
-		//Updating fetching URL to match author name
-		String stringUrlQuery = getUrlForSearchBarQuery(authorName + " albums");
+		//Search potentially typo'd author name on Google
+		String stringUrlQuery = getUrlForSearchBarQuery(authorName + label);
 		
 		//Opening web document
 		Document document = getDocument(stringUrlQuery);
 		if(document == null)
-			//getDocument() didn't work fetching this author
-			return new ArrayList<>();
-		else
-			//Printing fetching URL
-			System.out.println("Finding albums on: \"" + stringUrlQuery + "\" ...");
+			return null;
 		
 		//Acknowledging author name
 		Element authorElement = document.select("span[data-elabel]").first();
+		
+		if(cacheDocument)
+			setCachedDocument(document);
+		
 		if(authorElement == null)
+			return null;
+		
+		return authorElement.html();
+	}
+
+	@Override
+	public String correctAlbumName(String albumName, String authorName)
+	{
+		return correctAlbumName(albumName, authorName, false);
+	}
+	
+	public String correctAlbumName(String albumName, String authorName, boolean cacheSongElements)
+	{
+		String albumDataSelector = ".rl_container";
+		String htmlSongContainerSelector = "div[data-attrid=kc:/music/album:songs]";
+		
+		//Getting album's songs
+		Elements albumData = getDocument(getUrlForSearchBarQuery(albumName + " musics"))
+			.select(albumDataSelector);
+		
+		Elements songElements = albumData.select(htmlSongContainerSelector);
+		if(songElements.size() == 0 && authorName != null)
 		{
-			System.out.println("Can't find author on page, please retry");
-			
-			//End
-			return new ArrayList<>();
+			//If no song were found without author's name in query
+			albumData = getDocument(getUrlForSearchBarQuery(authorName + " " + albumName + " musics"))
+				.select(albumDataSelector);
+			songElements = albumData.select(htmlSongContainerSelector);
 		}
-		String correctAuthorName = authorElement.html();
+		
+		if(cacheSongElements)
+			setCachedSongElements(songElements);
+		
+		//Getting the two potential album name Elements
+		Elements potentialAlbumNameElements = albumData
+			.select("div[aria-level=\"2\"]")
+			.select("span[data-elabel]");
+
+		//Getting the correct album element's index
+		int albumNameLength = albumName.length();
+		
+		try
+		{
+			//Finding good album name
+			return Math.abs(potentialAlbumNameElements.get(0).html().length() - albumNameLength)
+					< Math.abs(potentialAlbumNameElements.get(1).html().length() - albumNameLength)
+						? potentialAlbumNameElements.get(0).html()
+						: potentialAlbumNameElements.get(1).html();
+		}
+		catch(IndexOutOfBoundsException e)
+		{
+			return null;
+		}
+	}
+
+	@Override
+	public String correctAlbumName(String albumName)
+	{
+		return correctAlbumName(albumName, null);
+	}
+
+	@Override
+	public String correctMusicResourceName(String MusicResourceName, String additionalInfo)
+	{
+		//Google search
+		additionalInfo = additionalInfo + " ";
+		String stringUrlQuery = getUrlForSearchBarQuery(additionalInfo + MusicResourceName);
+		
+		//Opening web document
+		Document document = getDocument(stringUrlQuery);
+		
+		if(document == null)
+			return null;
+		
+		//returning content of "showing results for ..." without html beacons
+		return Jsoup.parse(document.select("a[id=fprsl]").get(0).html()).text().replace(additionalInfo, "");
+	}
+	
+	@Override
+	public List<Album> findAlbums(String authorName)
+	{
+		return findAlbums(authorName, false);
+	}
+	
+	public List<Album> findAlbums(String authorName, boolean checkOtherAuthors)
+	{
+		List<Album> albums = new ArrayList<>();
+		
+		//Correcting author's name
+		String correctAuthorName = correctAuthorName(authorName, true, true);
 
 		//Scraping songs from google songs panels
-		Elements albumPanels = document.select("a[role=listitem]");
+		Elements albumPanels = getCachedDocument().select("a[role=listitem]");
 		
 		//Presentation of fetching progression
 		int foundAlbum = 0;
@@ -81,15 +171,18 @@ public class GoogleMusicScraper extends DirectWebScraper<MusicResource> implemen
 			System.out.println("Album #" + ++foundAlbum + ": " + albumName);
 		}
 		
+		//Empty document cache
+		emptyCachedDocument();
+		
 		return albums;
 	}
 
-	public ArrayList<Author> findAuthors(String albumName)
+	public List<Author> findAuthors(String albumName)
 	{
 		return findAuthors(albumName, false);
 	}
 	
-	public ArrayList<Author> findAuthors(String albumName, boolean wordAlbum)
+	public List<Author> findAuthors(String albumName, boolean wordAlbum)
 	{
 		ArrayList<Author> authors = new ArrayList<>();
 		
@@ -123,11 +216,11 @@ public class GoogleMusicScraper extends DirectWebScraper<MusicResource> implemen
 
 
 	@Override
-	public ArrayList<MusicResource> findMusicResourcesByAuthorName(String authorName)
+	public List<MusicResource> findMusicResourcesByAuthorName(String authorName)
 	{
 		return findMusicResourcesByAuthorName(authorName, false);
 	}
-	public ArrayList<MusicResource> findMusicResourcesByAuthorName(String authorName, boolean trust)
+	public List<MusicResource> findMusicResourcesByAuthorName(String authorName, boolean trust)
 	{
 		for(Album album: findAlbums(authorName))
 			getMusicResources().addAll(
@@ -149,56 +242,24 @@ public class GoogleMusicScraper extends DirectWebScraper<MusicResource> implemen
 	}
 
 	@Override
-	public ArrayList<MusicResource> findMusicResourcesByAlbumName(String albumName)
+	public List<MusicResource> findMusicResourcesByAlbumName(String albumName)
 	{
 		Author author = findAuthors(albumName).get(0);
 		return findMusicResources(author, albumName);
 	}
 
 	@Override
-	public ArrayList<MusicResource> findMusicResources(Author author, String albumName)
+	public List<MusicResource> findMusicResources(Author author, String albumName)
 	{
-		String albumDataSelector = ".rl_container";
-		String htmlSongContainerSelector = "div[data-attrid=kc:/music/album:songs]";
-		
-		//Getting album's songs
-		Elements albumData = getDocument(getUrlForSearchBarQuery(albumName + " musics"))
-			.select(albumDataSelector);
-		Elements songElements = albumData.select(htmlSongContainerSelector);
-		if(songElements.size() == 0)
-		{
-			//If no song were found without author's name in query
-			albumData = getDocument(getUrlForSearchBarQuery(author.getName() + " " + albumName + " musics"))
-				.select(albumDataSelector);
-			songElements = albumData.select(htmlSongContainerSelector);
-		}
-		
-		//Getting the two potential album name Elements
-		Elements potentialAlbumNameElements = albumData
-			.select("div[aria-level=\"2\"]")
-			.select("span[data-elabel]");
-
-		//Getting the correct album element's index
-		int albumNameLength = albumName.length();
 		String correctAlbumName = UNSET_ALBUM_NAME;
-		try
-		{
-			correctAlbumName =
-				Math.abs(potentialAlbumNameElements.get(0).html().length() - albumNameLength)
-				< Math.abs(potentialAlbumNameElements.get(1).html().length() - albumNameLength)
-					? potentialAlbumNameElements.get(0).html()
-					: potentialAlbumNameElements.get(1).html();
-		}
-		catch(IndexOutOfBoundsException e)
-		{
+		if((correctAlbumName = correctAlbumName(albumName, author.getName(), true)) == null)
 			System.out.println("Problem reading correct album name, set to " + UNSET_ALBUM_NAME + " instead");
-		}
 		
 		System.out.println("Album \"" + correctAlbumName + "\":");
 		
 		//Adding new songs to album, and printing informations
 		int foundSong = 0;
-		for(Element songElement: songElements)
+		for(Element songElement: getCachedSongElements())
 		{
 			//Getting song's name
 			String songName = songElement.select("div.title").html();
@@ -227,18 +288,20 @@ public class GoogleMusicScraper extends DirectWebScraper<MusicResource> implemen
 			}
 		}
 		
+		emptyCachedSongElements();
+		
 		return getMusicResources();
 	}
 	
 	@Override
-	public ArrayList<MusicResource> getMusicResources()
+	public List<MusicResource> getMusicResources()
 	{
 		return getResources();
 	}
 	
-	public ArrayList<Album> getAllAlbums()
+	public List<Album> getAllAlbums()
 	{
-		ArrayList<Album> albums = new ArrayList<>();
+		List<Album> albums = new ArrayList<>();
 		
 		for(MusicResource musicResource: getMusicResources())
 			albums.addAll(musicResource.getAlbums());
@@ -246,13 +309,34 @@ public class GoogleMusicScraper extends DirectWebScraper<MusicResource> implemen
 		return albums;
 	}
 
-	public ArrayList<Author> getAllAuthors()
+	public List<Author> getAllAuthors()
 	{
-		ArrayList<Author> authors = new ArrayList<>();
+		List<Author> authors = new ArrayList<>();
 		
 		for(MusicResource musicResource: getMusicResources())
 			authors.addAll(musicResource.getAuthors());
 		
 		return authors;
+	}
+
+	public Elements getCachedSongElements()
+	{
+		return _cachedSongElements;
+	}
+
+	public void setCachedSongElements(Elements cachedSongElements)
+	{
+		_cachedSongElements = cachedSongElements;
+	}
+	
+	public void cacheSongElements(Elements cachedSongElements)
+	{
+		if(getCachedSongElements() == null)
+			setCachedSongElements(cachedSongElements);
+	}
+	
+	public void emptyCachedSongElements()
+	{
+		setCachedSongElements(null);
 	}
 }
