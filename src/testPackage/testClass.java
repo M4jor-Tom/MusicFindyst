@@ -2,7 +2,6 @@ package testPackage;
 
 import java.util.HashMap;
 
-import musicFindystPackage.DataNotFoundException;
 import musicFindystPackage.GoogleMusicScraper;
 import musicFindystPackage.MusicFindystInterface;
 import musicFindystPackage.MusicFindystVersionable;
@@ -43,18 +42,12 @@ public class testClass
 		
 		MusicFindystInterface musicFindystInterface = new GoogleMusicScraper();
 		
-		try
-		{
-			System.out.println(
-				typoSongName + " correct name: " + musicFindystInterface.correctMusicResourceName(typoSongName, "Imagine dragons") + "\n" +
-				typoAlbumName + " correct name: " + musicFindystInterface.correctAlbumName(typoAlbumName) + "\n" +
-				typoAuthorName + " correct name: " + musicFindystInterface.correctAuthorName(typoAuthorName)
-			);
-		}
-		catch(DataNotFoundException e)
-		{
-			System.out.println("data not found");
-		}
+		//Unit tests
+		System.out.println(
+			typoSongName + " correct name: " + musicFindystInterface.correctMusicResourceName(typoSongName, "Imagine dragons") + "\n" +
+			typoAlbumName + " correct name: " + musicFindystInterface.correctAlbumName(typoAlbumName) + "\n" +
+			typoAuthorName + " correct name: " + musicFindystInterface.correctAuthorName(typoAuthorName)
+		);
 		
 		musicFindystInterface.findMusicResourcesByAlbumName(typoAlbumName);
 		

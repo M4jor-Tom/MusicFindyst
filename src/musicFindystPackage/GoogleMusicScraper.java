@@ -61,7 +61,7 @@ public class GoogleMusicScraper extends DirectWebScraper<MusicResource> implemen
 	}
 
 	@Override
-	public String correctAlbumName(String albumName, String authorName) throws DataNotFoundException
+	public String correctAlbumName(String albumName, String authorName)
 	{
 		String albumDataSelector = ".rl_container";
 		String htmlSongContainerSelector = "div[data-attrid=kc:/music/album:songs]";
@@ -96,12 +96,12 @@ public class GoogleMusicScraper extends DirectWebScraper<MusicResource> implemen
 		}
 		catch(IndexOutOfBoundsException e)
 		{
-			throw new DataNotFoundException();
+			return null;
 		}
 	}
 
 	@Override
-	public String correctAlbumName(String albumName) throws DataNotFoundException
+	public String correctAlbumName(String albumName)
 	{
 		return correctAlbumName(albumName, null);
 	}
@@ -239,14 +239,8 @@ public class GoogleMusicScraper extends DirectWebScraper<MusicResource> implemen
 	public List<MusicResource> findMusicResources(Author author, String albumName)
 	{
 		String correctAlbumName = UNSET_ALBUM_NAME;
-		try
-		{
-			correctAlbumName = correctAlbumName(albumName, author.getName());
-		}
-		catch(DataNotFoundException e)
-		{
+		if((correctAlbumName = correctAlbumName(albumName, author.getName())) == null)
 			System.out.println("Problem reading correct album name, set to " + UNSET_ALBUM_NAME + " instead");
-		}
 		
 		System.out.println("Album \"" + correctAlbumName + "\":");
 		
