@@ -5,6 +5,7 @@ import resourcePackage.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -27,14 +28,14 @@ public class GoogleMusicScraper extends DirectWebScraper<MusicResource> implemen
 	}
 	
 	@Override
-	public ArrayList<Album> findAlbums(String authorName)
+	public List<Album> findAlbums(String authorName)
 	{
 		return findAlbums(authorName, false);
 	}
 	
-	public ArrayList<Album> findAlbums(String authorName, boolean checkOtherAuthors)
+	public List<Album> findAlbums(String authorName, boolean checkOtherAuthors)
 	{
-		ArrayList<Album> albums = new ArrayList<>();
+		List<Album> albums = new ArrayList<>();
 		
 		//Updating fetching URL to match author name
 		String stringUrlQuery = getUrlForSearchBarQuery(authorName + " albums");
@@ -84,12 +85,12 @@ public class GoogleMusicScraper extends DirectWebScraper<MusicResource> implemen
 		return albums;
 	}
 
-	public ArrayList<Author> findAuthors(String albumName)
+	public List<Author> findAuthors(String albumName)
 	{
 		return findAuthors(albumName, false);
 	}
 	
-	public ArrayList<Author> findAuthors(String albumName, boolean wordAlbum)
+	public List<Author> findAuthors(String albumName, boolean wordAlbum)
 	{
 		ArrayList<Author> authors = new ArrayList<>();
 		
@@ -123,11 +124,11 @@ public class GoogleMusicScraper extends DirectWebScraper<MusicResource> implemen
 
 
 	@Override
-	public ArrayList<MusicResource> findMusicResourcesByAuthorName(String authorName)
+	public List<MusicResource> findMusicResourcesByAuthorName(String authorName)
 	{
 		return findMusicResourcesByAuthorName(authorName, false);
 	}
-	public ArrayList<MusicResource> findMusicResourcesByAuthorName(String authorName, boolean trust)
+	public List<MusicResource> findMusicResourcesByAuthorName(String authorName, boolean trust)
 	{
 		for(Album album: findAlbums(authorName))
 			getMusicResources().addAll(
@@ -149,14 +150,14 @@ public class GoogleMusicScraper extends DirectWebScraper<MusicResource> implemen
 	}
 
 	@Override
-	public ArrayList<MusicResource> findMusicResourcesByAlbumName(String albumName)
+	public List<MusicResource> findMusicResourcesByAlbumName(String albumName)
 	{
 		Author author = findAuthors(albumName).get(0);
 		return findMusicResources(author, albumName);
 	}
 
 	@Override
-	public ArrayList<MusicResource> findMusicResources(Author author, String albumName)
+	public List<MusicResource> findMusicResources(Author author, String albumName)
 	{
 		String albumDataSelector = ".rl_container";
 		String htmlSongContainerSelector = "div[data-attrid=kc:/music/album:songs]";
@@ -231,14 +232,14 @@ public class GoogleMusicScraper extends DirectWebScraper<MusicResource> implemen
 	}
 	
 	@Override
-	public ArrayList<MusicResource> getMusicResources()
+	public List<MusicResource> getMusicResources()
 	{
 		return getResources();
 	}
 	
-	public ArrayList<Album> getAllAlbums()
+	public List<Album> getAllAlbums()
 	{
-		ArrayList<Album> albums = new ArrayList<>();
+		List<Album> albums = new ArrayList<>();
 		
 		for(MusicResource musicResource: getMusicResources())
 			albums.addAll(musicResource.getAlbums());
@@ -246,9 +247,9 @@ public class GoogleMusicScraper extends DirectWebScraper<MusicResource> implemen
 		return albums;
 	}
 
-	public ArrayList<Author> getAllAuthors()
+	public List<Author> getAllAuthors()
 	{
-		ArrayList<Author> authors = new ArrayList<>();
+		List<Author> authors = new ArrayList<>();
 		
 		for(MusicResource musicResource: getMusicResources())
 			authors.addAll(musicResource.getAuthors());
