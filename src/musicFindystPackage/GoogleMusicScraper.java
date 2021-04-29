@@ -12,9 +12,6 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 public class GoogleMusicScraper extends DirectWebScraper<MusicResource> implements MusicFindystInterface
 {	
 	private static final String GOOGLE_STRING_URL = "https://www.google.com";
