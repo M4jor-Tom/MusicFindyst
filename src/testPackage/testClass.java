@@ -2,6 +2,7 @@ package testPackage;
 
 import java.util.HashMap;
 
+import musicFindystPackage.DataNotFoundException;
 import musicFindystPackage.GoogleMusicScraper;
 import musicFindystPackage.MusicFindystInterface;
 import musicFindystPackage.MusicFindystVersionable;
@@ -40,7 +41,21 @@ public class testClass
 			typoAuthorName = "dafte pounk";
 		
 		MusicFindystInterface musicFindystInterface = new GoogleMusicScraper();
+		
+		try
+		{
+			System.out.println(
+				typoAlbumName + " correct name: " + musicFindystInterface.correctAlbumName(typoAlbumName) + "\n" +
+				typoAuthorName + " correct name: " + musicFindystInterface.correctAuthorName(typoAuthorName)
+			);
+		}
+		catch(DataNotFoundException e)
+		{
+			System.out.println("data not found");
+		}
+		
 		musicFindystInterface.findMusicResourcesByAlbumName(typoAlbumName);
+		
 		System.out.println(
 			"Correct album name: " + musicFindystInterface.getMusicResources().get(0).getAlbums().get(0)
 			+ "\nRather than: " + typoAlbumName
