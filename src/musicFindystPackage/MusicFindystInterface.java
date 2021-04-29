@@ -11,6 +11,10 @@ public interface MusicFindystInterface
 	//Corrects an Author name based on Google search
 	public String correctAuthorName(String authorName);
 	
+	//Corrects an Album name based on a Google search (and an Author name ?)
+	public String correctAlbumName(String albumName, String authorName) throws DataNotFoundException;
+	public String correctAlbumName(String albumName) throws DataNotFoundException;
+	
 	//Finds on Google existing Albums for a given Author's name
 	public List<Album> findAlbums(String authorName);
 	
