@@ -37,6 +37,7 @@ public class testClass
 		versionsCheck();
 		
 		String
+			typoSongName = "smok and mirors",
 			typoAlbumName = "smoke + mirors",
 			typoAuthorName = "dafte pounk";
 		
@@ -45,6 +46,7 @@ public class testClass
 		try
 		{
 			System.out.println(
+				typoSongName + " correct name: " + musicFindystInterface.correctMusicResourceName(typoSongName, "Imagine dragons") + "\n" +
 				typoAlbumName + " correct name: " + musicFindystInterface.correctAlbumName(typoAlbumName) + "\n" +
 				typoAuthorName + " correct name: " + musicFindystInterface.correctAuthorName(typoAuthorName)
 			);

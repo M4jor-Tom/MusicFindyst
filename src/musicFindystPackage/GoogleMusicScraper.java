@@ -7,9 +7,13 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class GoogleMusicScraper extends DirectWebScraper<MusicResource> implements MusicFindystInterface
 {	
@@ -103,6 +107,23 @@ public class GoogleMusicScraper extends DirectWebScraper<MusicResource> implemen
 	public String correctAlbumName(String albumName) throws DataNotFoundException
 	{
 		return correctAlbumName(albumName, null);
+	}
+
+	@Override
+	public String correctMusicResourceName(String MusicResourceName, String additionalInfo)
+	{
+		//Google search
+		additionalInfo = additionalInfo + " ";
+		String stringUrlQuery = getUrlForSearchBarQuery(additionalInfo + MusicResourceName);
+		
+		//Opening web document
+		Document document = getDocument(stringUrlQuery);
+		
+		if(document == null)
+			return null;
+		
+		//returning content of "showing results for ..." without html beacons
+		return Jsoup.parse(document.select("a[id=fprsl]").get(0).html()).text().replace(additionalInfo, "");
 	}
 	
 	@Override
