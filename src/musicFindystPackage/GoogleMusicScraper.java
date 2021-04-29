@@ -16,6 +16,8 @@ public class GoogleMusicScraper extends DirectWebScraper<MusicResource> implemen
 	private static final String GOOGLE_STRING_URL = "https://www.google.com";
 	private static final String UNSET_ALBUM_NAME = "UNSET_ALBUM_NAME";
 	
+	private Elements _cachedSongElements;
+	
 	public GoogleMusicScraper()
 	{
 		super(GOOGLE_STRING_URL);
@@ -275,5 +277,26 @@ public class GoogleMusicScraper extends DirectWebScraper<MusicResource> implemen
 			authors.addAll(musicResource.getAuthors());
 		
 		return authors;
+	}
+
+	public Elements getCachedSongElements()
+	{
+		return _cachedSongElements;
+	}
+
+	public void setCachedSongElements(Elements cachedSongElements)
+	{
+		_cachedSongElements = cachedSongElements;
+	}
+	
+	public void cacheSongElements(Elements cachedSongElements)
+	{
+		if(getCachedSongElements() == null)
+			setCachedSongElements(cachedSongElements);
+	}
+	
+	public void emptyCachedSongElements()
+	{
+		setCachedSongElements(null);
 	}
 }
