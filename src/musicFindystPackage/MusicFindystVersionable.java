@@ -8,7 +8,7 @@ public class MusicFindystVersionable extends Versionable
 	{
 		super();
 		getDependencies().put("ResourcystVersionable", 5);
-		getDependencies().put("Versionyst", 4);
+		getDependencies().put("Versionyst", 5);
 	}
 	
 	@Override
