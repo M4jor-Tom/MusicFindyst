@@ -14,6 +14,6 @@ public class MusicFindystVersionable extends Versionable
 	@Override
 	public Integer getVersionId()
 	{
-		return 7;
+		return 8;
 	}
 }
