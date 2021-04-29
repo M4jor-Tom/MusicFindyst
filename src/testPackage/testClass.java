@@ -1,13 +1,11 @@
-package testPackage;
+package com.example.androidmusyst.MusicFindyst.src.testPackage;
 
 import java.util.HashMap;
 
-import musicFindystPackage.GoogleMusicScraper;
-import musicFindystPackage.MusicFindystInterface;
-import musicFindystPackage.MusicFindystVersionable;
-import resourcePackage.ResourcystVersionable;
-import versionystPackage.Versionable;
-import versionystPackage.Versionyst;
+import com.example.androidmusyst.MusicFindyst.src.musicFindystPackage.*;
+import com.example.androidmusyst.Resourcyst.src.resourcePackage.*;
+import com.example.androidmusyst.Versionyst.src.versionystPackage.*;
+
 
 public class testClass
 {

@@ -1,6 +1,6 @@
-package musicFindystPackage;
+package com.example.androidmusyst.MusicFindyst.src.musicFindystPackage;
 
-import resourcePackage.*;
+import com.example.androidmusyst.Resourcyst.src.resourcePackage.*;
 
 import java.net.MalformedURLException;
 import java.net.URL;

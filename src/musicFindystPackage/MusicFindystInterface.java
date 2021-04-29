@@ -1,10 +1,8 @@
-package musicFindystPackage;
+package com.example.androidmusyst.MusicFindyst.src.musicFindystPackage;
 
 import java.util.List;
 
-import resourcePackage.Album;
-import resourcePackage.Author;
-import resourcePackage.MusicResource;
+import com.example.androidmusyst.Resourcyst.src.resourcePackage.*;
 
 public interface MusicFindystInterface
 {

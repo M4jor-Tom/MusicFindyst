@@ -1,4 +1,4 @@
-package musicFindystPackage;
+package com.example.androidmusyst.MusicFindyst.src.musicFindystPackage;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -7,7 +7,7 @@ import java.util.List;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
-import resourcePackage.Resource;
+import com.example.androidmusyst.Resourcyst.src.resourcePackage.Resource;
 
 public abstract class DirectWebScraper<ResourceType extends Resource>
 {

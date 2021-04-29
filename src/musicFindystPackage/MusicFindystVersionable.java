@@ -1,6 +1,6 @@
-package musicFindystPackage;
+package com.example.androidmusyst.MusicFindyst.src.musicFindystPackage;
 
-import versionystPackage.Versionable;
+import com.example.androidmusyst.Versionyst.src.versionystPackage.*;
 
 public class MusicFindystVersionable extends Versionable
 {
@@ -15,5 +15,11 @@ public class MusicFindystVersionable extends Versionable
 	public Integer getVersionId()
 	{
 		return 9;
+	}
+
+	@Override
+	protected String getPackageName()
+	{
+		return "MusicFindystVersionable";
 	}
 }

@@ -1,4 +1,4 @@
-package musicFindystPackage;
+package com.example.androidmusyst.MusicFindyst.src.musicFindystPackage;
 
 public class TooMuchQueriesException extends Exception
 {
