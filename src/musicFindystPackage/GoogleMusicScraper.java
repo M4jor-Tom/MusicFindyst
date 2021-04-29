@@ -34,10 +34,10 @@ public class GoogleMusicScraper extends DirectWebScraper<MusicResource> implemen
 	@Override
 	public String correctAuthorName(String authorName)
 	{
-		return correctAuthorName(authorName, false);
+		return correctAuthorName(authorName, false, false);
 	}
 	
-	public String correctAuthorName(String authorName, boolean albumsPage)
+	public String correctAuthorName(String authorName, boolean cacheDocument, boolean albumsPage)
 	{
 		//Page selection
 		String label = albumsPage
@@ -48,12 +48,16 @@ public class GoogleMusicScraper extends DirectWebScraper<MusicResource> implemen
 		String stringUrlQuery = getUrlForSearchBarQuery(authorName + label);
 		
 		//Opening web document
-		cacheDocument(stringUrlQuery);
-		if(getCachedDocument() == null)
+		Document document = getDocument(stringUrlQuery);
+		if(document == null)
 			return null;
 		
 		//Acknowledging author name
-		Element authorElement = getCachedDocument().select("span[data-elabel]").first();
+		Element authorElement = document.select("span[data-elabel]").first();
+		
+		if(cacheDocument)
+			setCachedDocument(document);
+		
 		if(authorElement == null)
 			return null;
 		
@@ -63,20 +67,29 @@ public class GoogleMusicScraper extends DirectWebScraper<MusicResource> implemen
 	@Override
 	public String correctAlbumName(String albumName, String authorName)
 	{
+		return correctAlbumName(albumName, authorName, false);
+	}
+	
+	public String correctAlbumName(String albumName, String authorName, boolean cacheSongElements)
+	{
 		String albumDataSelector = ".rl_container";
 		String htmlSongContainerSelector = "div[data-attrid=kc:/music/album:songs]";
 		
 		//Getting album's songs
 		Elements albumData = getDocument(getUrlForSearchBarQuery(albumName + " musics"))
 			.select(albumDataSelector);
-		cacheSongElements(albumData.select(htmlSongContainerSelector));
-		if(getCachedSongElements().size() == 0 && authorName != null)
+		
+		Elements songElements = albumData.select(htmlSongContainerSelector);
+		if(songElements.size() == 0 && authorName != null)
 		{
 			//If no song were found without author's name in query
 			albumData = getDocument(getUrlForSearchBarQuery(authorName + " " + albumName + " musics"))
 				.select(albumDataSelector);
-			setCachedSongElements(albumData.select(htmlSongContainerSelector));
+			songElements = albumData.select(htmlSongContainerSelector);
 		}
+		
+		if(cacheSongElements)
+			setCachedSongElements(songElements);
 		
 		//Getting the two potential album name Elements
 		Elements potentialAlbumNameElements = albumData
@@ -134,7 +147,7 @@ public class GoogleMusicScraper extends DirectWebScraper<MusicResource> implemen
 		List<Album> albums = new ArrayList<>();
 		
 		//Correcting author's name
-		String correctAuthorName = correctAuthorName(authorName, true);
+		String correctAuthorName = correctAuthorName(authorName, true, true);
 
 		//Scraping songs from google songs panels
 		Elements albumPanels = getCachedDocument().select("a[role=listitem]");
@@ -239,7 +252,7 @@ public class GoogleMusicScraper extends DirectWebScraper<MusicResource> implemen
 	public List<MusicResource> findMusicResources(Author author, String albumName)
 	{
 		String correctAlbumName = UNSET_ALBUM_NAME;
-		if((correctAlbumName = correctAlbumName(albumName, author.getName())) == null)
+		if((correctAlbumName = correctAlbumName(albumName, author.getName(), true)) == null)
 			System.out.println("Problem reading correct album name, set to " + UNSET_ALBUM_NAME + " instead");
 		
 		System.out.println("Album \"" + correctAlbumName + "\":");
