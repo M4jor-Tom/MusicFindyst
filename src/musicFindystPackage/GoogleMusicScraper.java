@@ -26,6 +26,26 @@ public class GoogleMusicScraper extends DirectWebScraper<MusicResource> implemen
 	{
 		return getFetchUrl() + "/search?q=" + searchBarQuery;
 	}
+
+
+	@Override
+	public String correctAuthorName(String authorName)
+	{
+		//Search potentially typo'd author name on Google
+		String stringUrlQuery = getUrlForSearchBarQuery(authorName + " songs");
+		
+		//Opening web document
+		Document document = null;
+		if((document = getDocument(stringUrlQuery)) == null)
+			return null;
+		
+		//Acknowledging author name
+		Element authorElement = document.select("span[data-elabel]").first();
+		if(authorElement == null)
+			return null;
+		
+		return authorElement.html();
+	}
 	
 	@Override
 	public List<Album> findAlbums(String authorName)

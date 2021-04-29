@@ -8,6 +8,9 @@ import resourcePackage.MusicResource;
 
 public interface MusicFindystInterface
 {
+	//Corrects an Author name based on Google search
+	public String correctAuthorName(String authorName);
+	
 	//Finds on Google existing Albums for a given Author's name
 	public List<Album> findAlbums(String authorName);
 	
