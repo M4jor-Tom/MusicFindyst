@@ -39,25 +39,32 @@ public class testClass
 			typoAuthorName = "dafte pounk";
 		
 		MusicFindystInterface musicFindystInterface = new GoogleMusicScraper();
-		
-		//Unit tests
-		System.out.println(
-			typoSongName + " correct name: " + musicFindystInterface.correctMusicResourceName(typoSongName, "Imagine dragons") + "\n" +
-			typoAlbumName + " correct name: " + musicFindystInterface.correctAlbumName(typoAlbumName) + "\n" +
-			typoAuthorName + " correct name: " + musicFindystInterface.correctAuthorName(typoAuthorName)
-		);
-		
-		musicFindystInterface.findMusicResourcesByAlbumName(typoAlbumName);
-		
-		System.out.println(
-			"Correct album name: " + musicFindystInterface.getMusicResources().get(0).getAlbums().get(0)
-			+ "\nRather than: " + typoAlbumName
-		);
-		
-		musicFindystInterface.findMusicResourcesByAuthorName(typoAuthorName);
-		System.out.println(
-			"Correct author name: " + musicFindystInterface.getMusicResources().get(musicFindystInterface.getMusicResources().size() - 1).getAuthors().get(0)
-			+ "\nRather than: " + typoAuthorName
-		);
+
+		try
+		{
+			//Unit tests
+			System.out.println(
+				typoSongName + " correct name: " + musicFindystInterface.correctMusicResourceName(typoSongName, "Imagine dragons") + "\n" +
+				typoAlbumName + " correct name: " + musicFindystInterface.correctAlbumName(typoAlbumName) + "\n" +
+				typoAuthorName + " correct name: " + musicFindystInterface.correctAuthorName(typoAuthorName)
+			);
+
+				musicFindystInterface.findMusicResourcesByAlbumName(typoAlbumName);
+
+			System.out.println(
+				"Correct album name: " + musicFindystInterface.getMusicResources().get(0).getAlbums().get(0)
+				+ "\nRather than: " + typoAlbumName
+			);
+
+			musicFindystInterface.findMusicResourcesByAuthorName(typoAuthorName);
+			System.out.println(
+				"Correct author name: " + musicFindystInterface.getMusicResources().get(musicFindystInterface.getMusicResources().size() - 1).getAuthors().get(0)
+				+ "\nRather than: " + typoAuthorName
+			);
+		}
+		catch(TooMuchQueriesException e)
+		{
+			System.out.println(e.getMessage());
+		}
 	}
 }

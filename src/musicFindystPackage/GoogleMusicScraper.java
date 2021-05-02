@@ -32,12 +32,12 @@ public class GoogleMusicScraper extends DirectWebScraper<MusicResource> implemen
 
 
 	@Override
-	public String correctAuthorName(String authorName)
+	public String correctAuthorName(String authorName) throws TooMuchQueriesException
 	{
 		return correctAuthorName(authorName, false, false);
 	}
 	
-	public String correctAuthorName(String authorName, boolean cacheDocument, boolean albumsPage)
+	public String correctAuthorName(String authorName, boolean cacheDocument, boolean albumsPage) throws TooMuchQueriesException
 	{
 		//Page selection
 		String label = albumsPage
@@ -65,12 +65,12 @@ public class GoogleMusicScraper extends DirectWebScraper<MusicResource> implemen
 	}
 
 	@Override
-	public String correctAlbumName(String albumName, String authorName)
+	public String correctAlbumName(String albumName, String authorName) throws TooMuchQueriesException
 	{
 		return correctAlbumName(albumName, authorName, false);
 	}
 	
-	public String correctAlbumName(String albumName, String authorName, boolean cacheSongElements)
+	public String correctAlbumName(String albumName, String authorName, boolean cacheSongElements) throws TooMuchQueriesException
 	{
 		String albumDataSelector = ".rl_container";
 		String htmlSongContainerSelector = "div[data-attrid=kc:/music/album:songs]";
@@ -114,13 +114,13 @@ public class GoogleMusicScraper extends DirectWebScraper<MusicResource> implemen
 	}
 
 	@Override
-	public String correctAlbumName(String albumName)
+	public String correctAlbumName(String albumName) throws TooMuchQueriesException
 	{
 		return correctAlbumName(albumName, null);
 	}
 
 	@Override
-	public String correctMusicResourceName(String MusicResourceName, String additionalInfo)
+	public String correctMusicResourceName(String MusicResourceName, String additionalInfo) throws TooMuchQueriesException
 	{
 		//Google search
 		additionalInfo = additionalInfo + " ";
@@ -137,12 +137,12 @@ public class GoogleMusicScraper extends DirectWebScraper<MusicResource> implemen
 	}
 	
 	@Override
-	public List<Album> findAlbums(String authorName)
+	public List<Album> findAlbums(String authorName) throws TooMuchQueriesException
 	{
 		return findAlbums(authorName, false);
 	}
 	
-	public List<Album> findAlbums(String authorName, boolean checkOtherAuthors)
+	public List<Album> findAlbums(String authorName, boolean checkOtherAuthors) throws TooMuchQueriesException
 	{
 		List<Album> albums = new ArrayList<>();
 		
@@ -177,12 +177,12 @@ public class GoogleMusicScraper extends DirectWebScraper<MusicResource> implemen
 		return albums;
 	}
 
-	public List<Author> findAuthors(String albumName)
+	public List<Author> findAuthors(String albumName) throws TooMuchQueriesException
 	{
 		return findAuthors(albumName, false);
 	}
 	
-	public List<Author> findAuthors(String albumName, boolean wordAlbum)
+	public List<Author> findAuthors(String albumName, boolean wordAlbum) throws TooMuchQueriesException
 	{
 		ArrayList<Author> authors = new ArrayList<>();
 		
@@ -214,13 +214,13 @@ public class GoogleMusicScraper extends DirectWebScraper<MusicResource> implemen
 		return authors;
 	}
 
-
 	@Override
-	public List<MusicResource> findMusicResourcesByAuthorName(String authorName)
+	public List<MusicResource> findMusicResourcesByAuthorName(String authorName) throws TooMuchQueriesException
 	{
 		return findMusicResourcesByAuthorName(authorName, false);
 	}
-	public List<MusicResource> findMusicResourcesByAuthorName(String authorName, boolean trust)
+
+	public List<MusicResource> findMusicResourcesByAuthorName(String authorName, boolean trust) throws TooMuchQueriesException
 	{
 		for(Album album: findAlbums(authorName))
 			getMusicResources().addAll(
@@ -242,14 +242,14 @@ public class GoogleMusicScraper extends DirectWebScraper<MusicResource> implemen
 	}
 
 	@Override
-	public List<MusicResource> findMusicResourcesByAlbumName(String albumName)
+	public List<MusicResource> findMusicResourcesByAlbumName(String albumName) throws TooMuchQueriesException
 	{
 		Author author = findAuthors(albumName).get(0);
 		return findMusicResources(author, albumName);
 	}
 
 	@Override
-	public List<MusicResource> findMusicResources(Author author, String albumName)
+	public List<MusicResource> findMusicResources(Author author, String albumName) throws TooMuchQueriesException
 	{
 		String correctAlbumName = UNSET_ALBUM_NAME;
 		if((correctAlbumName = correctAlbumName(albumName, author.getName(), true)) == null)
