@@ -41,7 +41,7 @@ public class GoogleMusicScraper extends DirectWebScraper<MusicResource> implemen
 	{
 		//Page selection
 		String label = albumsPage
-			? " ablums"
+			? " albums"
 			: " songs";
 		
 		//Search potentially typo'd author name on Google
