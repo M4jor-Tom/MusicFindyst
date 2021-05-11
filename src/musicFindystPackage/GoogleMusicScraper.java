@@ -12,6 +12,8 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import info.debatty.java.stringsimilarity.JaroWinkler;
+
 public class GoogleMusicScraper extends DirectWebScraper<MusicResource> implements MusicFindystInterface
 {	
 	private static final String GOOGLE_STRING_URL = "https://www.google.com";
@@ -102,10 +104,15 @@ public class GoogleMusicScraper extends DirectWebScraper<MusicResource> implemen
 		try
 		{
 			//Finding good album name
-			return Math.abs(potentialAlbumNameElements.get(0).html().length() - albumNameLength)
-					< Math.abs(potentialAlbumNameElements.get(1).html().length() - albumNameLength)
-						? potentialAlbumNameElements.get(0).html()
-						: potentialAlbumNameElements.get(1).html();
+			JaroWinkler jaroWinkler = new JaroWinkler();
+
+			double
+					firstDistance = jaroWinkler.distance(albumName, potentialAlbumNameElements.get(0).html()),
+					secondDistance = jaroWinkler.distance(albumName, potentialAlbumNameElements.get(1).html());
+
+			return firstDistance < secondDistance
+					? potentialAlbumNameElements.get(0).html()
+					: potentialAlbumNameElements.get(1).html();
 		}
 		catch(IndexOutOfBoundsException e)
 		{
