@@ -97,9 +97,6 @@ public class GoogleMusicScraper extends DirectWebScraper<MusicResource> implemen
 		Elements potentialAlbumNameElements = albumData
 			.select("div[aria-level=\"2\"]")
 			.select("span[data-elabel]");
-
-		//Getting the correct album element's index
-		int albumNameLength = albumName.length();
 		
 		try
 		{
