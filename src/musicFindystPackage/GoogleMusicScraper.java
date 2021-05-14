@@ -55,15 +55,30 @@ public class GoogleMusicScraper extends DirectWebScraper<MusicResource> implemen
 			return null;
 		
 		//Acknowledging author name
-		Element authorElement = document.select("span[data-elabel]").first();
-		
+		Elements potentialAuthorElements = document.select("span[data-elabel]");
+
 		if(cacheDocument)
 			setCachedDocument(document);
 		
-		if(authorElement == null)
+		if(potentialAuthorElements == null)
 			return null;
-		
-		return authorElement.html();
+		try
+		{
+			//Finding good album name
+			JaroWinkler jaroWinkler = new JaroWinkler();
+
+			double
+					firstDistance = jaroWinkler.distance(authorName, potentialAuthorElements.get(0).html()),
+					secondDistance = jaroWinkler.distance(authorName, potentialAuthorElements.get(1).html());
+
+			return firstDistance < secondDistance
+					? potentialAuthorElements.get(0).html()
+					: potentialAuthorElements.get(1).html();
+		}
+		catch(IndexOutOfBoundsException e)
+		{
+			return null;
+		}
 	}
 
 	@Override
