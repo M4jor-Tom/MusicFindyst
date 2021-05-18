@@ -52,13 +52,13 @@ public class testClass
 				musicFindystInterface.findMusicResourcesByAlbumName(typoAlbumName);
 
 			System.out.println(
-				"Correct album name: " + musicFindystInterface.getMusicResources().get(0).getAlbums().get(0)
+				"Correct album name: " + musicFindystInterface.getFoundMusicResources().get(0).getAlbums().get(0)
 				+ "\nRather than: " + typoAlbumName
 			);
 
 			musicFindystInterface.findMusicResourcesByAuthorName(typoAuthorName);
 			System.out.println(
-				"Correct author name: " + musicFindystInterface.getMusicResources().get(musicFindystInterface.getMusicResources().size() - 1).getAuthors().get(0)
+				"Correct author name: " + musicFindystInterface.getFoundMusicResources().get(musicFindystInterface.getFoundMusicResources().size() - 1).getAuthors().get(0)
 				+ "\nRather than: " + typoAuthorName
 			);
 		}

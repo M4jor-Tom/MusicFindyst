@@ -29,5 +29,5 @@ public interface MusicFindystInterface
 	public List<MusicResource> findMusicResources(Author author, String albumName) throws TooMuchQueriesException;
 	
 	//Mandatory getter
-	public List<MusicResource> getMusicResources();
+	public List<MusicResource> getFoundMusicResources();
 }

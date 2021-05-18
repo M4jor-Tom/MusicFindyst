@@ -242,7 +242,7 @@ public class GoogleMusicScraper extends DirectWebScraper<MusicResource> implemen
 	public List<MusicResource> findMusicResourcesByAuthorName(String authorName, boolean trust) throws TooMuchQueriesException
 	{
 		for(Album album: findAlbums(authorName))
-			getMusicResources().addAll(
+			getFoundMusicResources().addAll(
 				findMusicResources(
 					new Author(
 						trust
@@ -257,7 +257,7 @@ public class GoogleMusicScraper extends DirectWebScraper<MusicResource> implemen
 					)
 			);
 		
-		return getMusicResources();
+		return getFoundMusicResources();
 	}
 
 	@Override
@@ -297,7 +297,7 @@ public class GoogleMusicScraper extends DirectWebScraper<MusicResource> implemen
 				
 				//Instantiation of MusicResource object
 				//[WARNING] Only the current album is added to the MusicResource
-				getMusicResources().add(new MusicResource(youtubeSongUrl, null, songName, new Album(author, correctAlbumName)));
+				getFoundMusicResources().add(new MusicResource(youtubeSongUrl, null, songName, new Album(author, correctAlbumName)));
 				
 				System.out.println("Song #" + ++foundSong + ": " + songName + " (" + youtubeSongUrl + ")");
 			}
@@ -309,11 +309,11 @@ public class GoogleMusicScraper extends DirectWebScraper<MusicResource> implemen
 		
 		emptyCachedSongElements();
 		
-		return getMusicResources();
+		return getFoundMusicResources();
 	}
 	
 	@Override
-	public List<MusicResource> getMusicResources()
+	public List<MusicResource> getFoundMusicResources()
 	{
 		return getResources();
 	}
@@ -322,7 +322,7 @@ public class GoogleMusicScraper extends DirectWebScraper<MusicResource> implemen
 	{
 		List<Album> albums = new ArrayList<>();
 		
-		for(MusicResource musicResource: getMusicResources())
+		for(MusicResource musicResource: getFoundMusicResources())
 			albums.addAll(musicResource.getAlbums());
 		
 		return albums;
@@ -332,7 +332,7 @@ public class GoogleMusicScraper extends DirectWebScraper<MusicResource> implemen
 	{
 		List<Author> authors = new ArrayList<>();
 		
-		for(MusicResource musicResource: getMusicResources())
+		for(MusicResource musicResource: getFoundMusicResources())
 			authors.addAll(musicResource.getAuthors());
 		
 		return authors;
