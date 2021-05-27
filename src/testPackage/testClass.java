@@ -5,6 +5,7 @@ import java.util.HashMap;
 import musicFindystPackage.GoogleMusicScraper;
 import musicFindystPackage.MusicFindystInterface;
 import musicFindystPackage.MusicFindystVersionable;
+import musicFindystPackage.TooMuchQueriesException;
 import resourcePackage.ResourcystVersionable;
 import versionystPackage.Versionable;
 import versionystPackage.Versionyst;
