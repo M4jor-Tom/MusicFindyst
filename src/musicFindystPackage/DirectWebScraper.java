@@ -27,7 +27,7 @@ public abstract class DirectWebScraper<ResourceType extends Resource>
 		setCachedDocument(null);
 	}
 
-	public static Document getDocument(String stringUrl)
+	public static Document getDocument(String stringUrl) throws TooMuchQueriesException
 	{
 		try
 		{
@@ -36,7 +36,7 @@ public abstract class DirectWebScraper<ResourceType extends Resource>
 		catch (IOException e)
 		{
 			if(e.toString().contains("Status=429"))
-				System.out.println("Too many requests sent, please try again later or use a VPN for this time");
+				throw new TooMuchQueriesException();
 			else
 				e.printStackTrace();
 		}
@@ -74,7 +74,7 @@ public abstract class DirectWebScraper<ResourceType extends Resource>
 		_cachedDocument = cachedDocument;
 	}
 	
-	protected void cacheDocument(String stringUrl)
+	protected void cacheDocument(String stringUrl) throws TooMuchQueriesException
 	{
 		if(getCachedDocument() == null)
 			setCachedDocument(getDocument(stringUrl));
